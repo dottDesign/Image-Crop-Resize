@@ -1,62 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Adler University UTM Builder</title>
-    <link rel="icon" type="image/x-icon" href="https://www.adler.edu/wp-content/uploads/2025/07/favicon-150x150.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Image Crop + Resize</title>
+    <link rel="icon" type="image/x-icon" href="https://www.adler.edu/wp-content/uploads/2025/07/favicon-150x150.png" />
     <style>
-        :root {
-            --adler-red: #b91c1c;
-            --adler-charcoal: #111827;
-            --adler-gray-100: #f3f4f6;
-            --adler-gray-200: #e5e7eb;
-            --adler-gray-400: #9ca3af;
-            --adler-gray-600: #4b5563;
+        :root{
+      --adler-red:#b91c1c;
+      --adler-charcoal:#111827;
+      --adler-gray-100:#f3f4f6;
+      --adler-gray-200:#e5e7eb;
+      --adler-gray-400:#9ca3af;
+      --adler-gray-600:#4b5563;
+      --radius-lg:16px;
+      --radius-md:10px;
+    }
 
-            --radius-lg: 16px;
-            --radius-md: 10px;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:var(--adler-gray-100);
+      color:var(--adler-charcoal);
+      display:flex;
+      justify-content:center;
+      padding:32px 16px;
+       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
                 sans-serif;
-        }
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: var(--adler-gray-100);
-            color: var(--adler-charcoal);
-            display: flex;
-            justify-content: center;
-            padding: 32px 16px;
-        }
+    .wrapper{width:100%;max-width:1200px}
 
-        .page,
-        .wrapper {
-            width: 100%;
-            max-width: 1200px;
-        }
 
-        /* Top header */
-        .site-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 16px;
-        }
-
-        .site-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-mark {
+    .site-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .site-brand{display:flex;align-items:center;gap:10px}
+           .brand-mark {
             width: 32px;
             height: 32px;
             overflow: hidden;
@@ -73,417 +59,204 @@
             object-fit: cover;
         }
 
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+    .brand-title{font-weight:700;letter-spacing:.01em}
+    .brand-sub{font-size:.85rem;color:var(--adler-gray-600);margin-top:2px}
 
-        .brand-text-main {
-            font-size: 1.05rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.5fr) minmax(0,1.4fr);
+      gap:18px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
-        .brand-text-sub {
-            font-size: 0.8rem;
-            color: var(--adler-gray-600);
-        }
+    .panel{
+      background:#fff;
+      border:1px solid var(--adler-gray-200);
+      padding:14px;
+    }
+    .panel-title{
+      font-size:.8rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--adler-gray-600);
+      margin-bottom:10px;
+    }
 
-        .tool-title {
-            text-align: right;
-        }
+    .field-group{margin-bottom:12px}
+    .field-group.inline{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:10px;
+    }
 
-        .tool-title-main {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
+    label{
+      display:block;
+      font-size:.85rem;
+      color:var(--adler-gray-600);
+      margin-bottom:6px;
+      letter-spacing:.01em;
+    }
 
-        .tool-title-sub {
-            font-size: 0.85rem;
-            color: var(--adler-gray-600);
-        }
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select{
+      width:100%;
+      padding:8px 10px;
+      border-radius:var(--radius-md);
+      border:1px solid var(--adler-gray-200);
+      background:#fff;
+      color:var(--adler-charcoal);
+      font-size:.9rem;
+      outline:none;
+    }
+    input[type="file"]{padding:7px 10px}
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="file"]:focus,
+    select:focus{
+      border-color:rgba(185,28,28,.45);
+      box-shadow:0 0 0 3px rgba(185,28,28,.12);
+    }
 
-        /* Card */
-        .card {
-            background: #ffffff;
-            padding: 20px 20px 18px;
-            border: 1px solid var(--adler-gray-200);
-            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
-        }
+    input[type="range"]{width:100%}
 
-        .grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.4fr);
-            gap: 18px;
-        }
+    .help{
+      font-size:.85rem;
+      color:var(--adler-gray-600);
+      margin-top:8px;
+    }
 
-        @media (max-width: 800px) {
-            body {
-                padding-top: 20px;
-            }
+    .button-row{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
 
-            .grid {
-                grid-template-columns: minmax(0, 1fr);
-            }
+    button{
+      border:none;
+      font-size:.9rem;
+      padding:8px 16px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:500;
+      letter-spacing:.02em;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+      border-radius:999px;
+      user-select:none;
+    }
 
-            .tool-title {
-                text-align: left;
-            }
-        }
+    button.primary{
+      background:var(--adler-red);
+      color:#fff;
+      box-shadow:0 10px 20px rgba(185,28,28,.25);
+    }
+    button.primary:hover{
+      background:#991b1b;
+      transform:translateY(-1px);
+      box-shadow:0 14px 26px rgba(185,28,28,.30);
+    }
 
-        .panel {
-            background: #ffffff;
-            border: 1px solid var(--adler-gray-200);
-            padding: 14px 14px 14px;
-        }
+    button.secondary{
+      background:#fff;
+      color:var(--adler-gray-600);
+      border:1px solid var(--adler-gray-200);
+      box-shadow:none;
+    }
+    button.secondary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 22px rgba(15,23,42,.08);
+    }
 
-        .panel-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.09em;
-            color: var(--adler-gray-600);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
+    button:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
 
-        .field-group {
-            margin-bottom: 12px;
-        }
+    .kpis{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi{
+      background:var(--adler-gray-100);
+      border:1px solid var(--adler-gray-200);
+      padding:10px 12px;
+      border-radius:var(--radius-md);
+    }
+    .kpi .t{font-size:.78rem;color:var(--adler-gray-600);letter-spacing:.06em;text-transform:uppercase}
+    .kpi .v{margin-top:6px;font-weight:700;font-variant-numeric:tabular-nums}
 
-        .field-group.inline {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-        }
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--adler-gray-200);
+      background:#fff;
+      font-size:.85rem;
+      color:var(--adler-gray-600);
+      white-space:nowrap;
+    }
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: var(--adler-gray-600);
-        }
+    /* Cropper stage */
+    .stage{
+      border:1px solid var(--adler-gray-200);
+      background:#fff;
+      border-radius:var(--radius-lg);
+      padding:12px;
+    }
+    .empty{
+      border:1px dashed var(--adler-gray-200);
+      background:var(--adler-gray-100);
+      border-radius:var(--radius-lg);
+      min-height:360px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:6px;
+      text-align:center;
+      padding:28px;
+    }
+    .empty .t{font-weight:700}
+    .empty .s{color:var(--adler-gray-600);font-size:.9rem}
 
-        label span.req {
-            color: var(--adler-red);
-            margin-left: 2px;
-        }
+    .scroll{overflow:auto;max-height:620px}
+    canvas{display:block;max-width:100%;border-radius:14px}
 
-        input[type="text"] {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--adler-gray-200);
-            background: #ffffff;
-            color: var(--adler-charcoal);
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.14s ease, box-shadow 0.14s ease,
-                background 0.14s ease;
-        }
+    .row{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
+    }
+    .grow{flex:1;min-width:240px}
+    .tight{min-width:260px}
+    .switch{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border:1px solid var(--adler-gray-200);
+      padding:10px 12px;border-radius:var(--radius-md);
+      background:#fff;
+    }
+    .switch input{
+      width:44px;height:24px;appearance:none;background:var(--adler-gray-200);
+      border-radius:999px;position:relative;outline:none;cursor:pointer;border:1px solid var(--adler-gray-200);
+    }
+    .switch input:checked{background:var(--adler-red);border-color:rgba(185,28,28,.25)}
+    .switch input::after{
+      content:""; width:18px;height:18px;background:#fff;border-radius:50%;
+      position:absolute;top:2px;left:2px;transition:transform .15s ease;
+      box-shadow:0 2px 6px rgba(0,0,0,.2);
+    }
+    .switch input:checked::after{transform:translateX(20px)}
 
-        input[type="text"]::placeholder {
-            color: var(--adler-gray-400);
-            font-size: 0.85rem;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--adler-red);
-            box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.18);
-            background: #ffffff;
-        }
-
-        .hint {
-            font-size: 0.75rem;
-            color: var(--adler-gray-600);
-            margin-top: 4px;
-        }
-
-        .error {
-            margin-top: 4px;
-            font-size: 0.75rem;
-            color: var(--adler-red);
-        }
-
-        /* Toggle */
-        .toggle-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 6px;
-            margin-top: 4px;
-        }
-
-        .toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            color: var(--adler-gray-600);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .toggle input {
-            display: none;
-        }
-
-        .toggle-pill {
-            width: 32px;
-            height: 18px;
-            border-radius: 999px;
-            background: var(--adler-gray-100);
-            border: 1px solid var(--adler-gray-400);
-            padding: 1px;
-            display: flex;
-            align-items: center;
-            transition: background 0.16s ease, border-color 0.16s ease;
-        }
-
-        .toggle-thumb {
-            width: 14px;
-            height: 14px;
-            border-radius: 999px;
-            background: var(--adler-gray-400);
-            transform: translateX(0);
-            transition: transform 0.16s ease, background 0.16s ease;
-        }
-
-        .toggle input:checked+.toggle-pill {
-            background: #fee2e2;
-            border-color: var(--adler-red);
-        }
-
-        .toggle input:checked+.toggle-pill .toggle-thumb {
-            transform: translateX(12px);
-            background: var(--adler-red);
-        }
-
-        /* Buttons */
-        .button-row {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        button {
-            border: none;
-            font-size: 0.9rem;
-            padding: 8px 16px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            transition: transform 0.12s ease, box-shadow 0.12s ease,
-                background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-        }
-
-        button.primary {
-            background: var(--adler-red);
-            color: #ffffff;
-            box-shadow: 0 10px 20px rgba(185, 28, 28, 0.25);
-        }
-
-        button.primary:hover {
-            background: #991b1b;
-            transform: translateY(-1px);
-            box-shadow: 0 14px 26px rgba(185, 28, 28, 0.3);
-        }
-
-        button.secondary {
-            background: #ffffff;
-            color: var(--adler-gray-600);
-            border: 1px solid var(--adler-gray-200);
-        }
-
-        /* Output */
-        .output-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .chip-row {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            font-size: 0.75rem;
-        }
-
-        .chip {
-            border-radius: 999px;
-            padding: 4px 8px;
-            border: 1px solid var(--adler-gray-200);
-            background: var(--adler-gray-100);
-            color: var(--adler-gray-600);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .chip-key {
-            color: var(--adler-charcoal);
-            font-weight: 500;
-        }
-
-        .output-box {
-            background: #ffffff;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--adler-gray-200);
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            color: var(--adler-charcoal);
-            word-break: break-all;
-            min-height: 46px;
-            display: flex;
-            align-items: center;
-        }
-
-        .output-box.empty {
-            color: var(--adler-gray-400);
-        }
-
-        .status {
-            font-size: 0.8rem;
-            color: #059669;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .status.show {
-            opacity: 1;
-        }
-
-        a.preview-link {
-            font-size: 0.8rem;
-            color: var(--adler-red);
-            text-decoration: none;
-        }
-
-        a.preview-link:hover {
-            text-decoration: underline;
-        }
-
-        .footer-hint {
-            margin-top: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            color: var(--adler-gray-600);
-        }
-
-        .utility-tag {
-            margin-top: 12px;
-            font-size: 0.75rem;
-            color: var(--adler-gray-600);
-            text-align: right;
-        }
-
-        /* Tooltip */
-        .label-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tooltip-wrap {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            top: -3px;
-        }
-
-        .tooltip-btn {
-            width: 18px;
-            height: 18px;
-            border-radius: 999px;
-            border: 1px solid var(--adler-gray-200);
-            background: var(--adler-gray-100);
-            color: var(--adler-gray-600);
-            font-size: 0.75rem;
-            line-height: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .tooltip-btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.25);
-            border-color: var(--adler-red);
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: #111827;
-            color: #ffffff;
-            font-size: 0.75rem;
-            padding: 8px 10px;
-            border-radius: 10px;
-            width: max-content;
-            max-width: 240px;
-            z-index: 50;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease;
-        }
-
-        .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 6px;
-            border-style: solid;
-            border-color: #111827 transparent transparent transparent;
-        }
-
-        .tooltip-wrap:hover .tooltip,
-        .tooltip-wrap:focus-within .tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(-2px);
-        }
-
-        /* Counter warnings */
-        #contentCharWarning,
-        #urlCharWarning {
-            font-weight: 500;
-        }
-
-        #contentCharWarning {
-            color: #b45309;
-        }
-
-        #urlCharWarning.warning {
-            color: #b45309;
-        }
-
-        #urlCharWarning.danger {
-            color: var(--adler-red);
-        }
-    </style>
+    .note{
+      font-size:.85rem;color:var(--adler-gray-600);line-height:1.35;margin-top:8px;
+    }
+    .tips ul{margin:8px 0 0 18px;padding:0}
+    .tips li{margin:4px 0}
+    .mono{font-variant-numeric:tabular-nums}
+  </style>
 </head>
 
 <body>
@@ -494,497 +267,690 @@
                     <div class="brand-mark">
                         <img src="https://www.adler.edu/wp-content/uploads/2025/07/favicon-300x300.png" alt="Adler favicon" class="brand-icon" />
                     </div>
-                    <div class="brand-text">
-                        <div class="brand-text-main">Adler University</div>
-                        <div class="brand-text-sub">Digital &amp; Web Tools</div>
+                    <div>
+                        <div class="brand-title">Adler Image Crop + Resize</div>
+                        <div class="brand-sub">Single-file tool for cropping and exporting resized images</div>
                     </div>
                 </div>
-                <div class="tool-title">
-                    <div class="tool-title-main">UTM Builder</div>
-                    <div class="tool-title-sub">Generate tracking URLs for Adler campaigns</div>
-                </div>
+                <span class="badge" id="cursorHint">Cursor: ready</span>
             </header>
             <div class="grid">
-                <!-- INPUT PANEL -->
-                <section class="panel">
-                    <div class="panel-title">
-                        <span>Campaign details</span>
-                    </div>
-                    <div class="field-group">
-                        <div class="label-row">
-                            <label for="baseUrl">Base URL <span class="req">*</span></label>
-                            <span class="tooltip-wrap">
-                                <button type="button" class="tooltip-btn" aria-label="Base URL info">?</button>
-                                <span class="tooltip">
-                                    The destination page the user will land on. Must start with https://adler.edu or a
-                                    valid subdomain.
-                                </span>
-                            </span>
-                        </div>
-                        <input type="text" id="baseUrl" value="https://adler.edu/" />
-                        <div id="urlError" class="error" style="display:none;"></div>
-                        <div class="hint">
-                            The domain should be <strong>https://adler.edu</strong> or
-                            <strong>https://subdomain.adler.edu</strong>.<br />You
-                            can add or edit the path, for example:
-                            <em>/programs/ma-counselling-psychology</em>.
-                        </div>
-                    </div>
-                    <div class="field-group inline">
-                        <div>
-                            <div class="label-row">
-                                <label for="source">utm_source <span class="req">*</span></label>
-                                <span class="tooltip-wrap">
-                                    <button type="button" class="tooltip-btn" aria-label="utm_source info">?</button>
-                                    <span class="tooltip">
-                                        Identifies who sent the traffic (platform, partner, vendor). Example: google,
-                                        facebook, newsletter.
-                                    </span>
-                                </span>
+                <div>
+                    <div class="panel">
+                        <div class="panel-title">Image</div>
+                        <div class="row">
+                            <div class="grow">
+                                <label for="file">Choose file</label>
+                                <input id="file" type="file" accept="image/*" />
                             </div>
-                            <input type="text" id="source" list="sourceOptions" placeholder="Select or create a new one" />
-                            <datalist id="sourceOptions"></datalist>
-                        </div>
-                        <div>
-                            <div class="label-row">
-                                <label for="medium">utm_medium <span class="req">*</span></label>
-                                <span class="tooltip-wrap">
-                                    <button type="button" class="tooltip-btn" aria-label="utm_medium info">?</button>
-                                    <span class="tooltip">
-                                        Identifies how traffic arrives (channel type). Example: paid_search, email,
-                                        paid_social.
-                                    </span>
-                                </span>
+                            <div class="tight">
+                                <label>Actions</label>
+                                <div class="button-row">
+                                    <button id="zoomOut" class="secondary" disabled>Zoom out</button>
+                                    <button id="zoomIn" class="secondary" disabled>Zoom in</button>
+                                    <button id="resetCrop" class="secondary" disabled>Reset crop</button>
+                                </div>
                             </div>
-                            <input type="text" id="medium" list="mediumOptions" placeholder="Select or create a new one" />
-                            <datalist id="mediumOptions"></datalist>
                         </div>
-                    </div>
-                    <div class="field-group inline">
-                        <div>
-                            <div class="label-row">
-                                <label for="campaign">utm_campaign <span class="req">*</span></label>
-                                <span class="tooltip-wrap">
-                                    <button type="button" class="tooltip-btn" aria-label="utm_campaign info">?</button>
-                                    <span class="tooltip">
-                                        Campaign name for reporting/grouping. Example: fall_2026_launch, open_house,
-                                        lead_nurture.
-                                    </span>
-                                </span>
+                        <div style="height:12px"></div>
+                        <div class="stage">
+                            <div id="empty" class="empty">
+                                <div class="t">No image loaded</div>
+                                <div class="s">Choose a file above to start cropping.</div>
                             </div>
-                            <input type="text" id="campaign" list="campaignOptions" placeholder="Select or create a new one" />
-                            <datalist id="campaignOptions"></datalist>
-                        </div>
-                        <div>
-                            <div class="label-row">
-                                <label for="term">utm_term</label>
-                                <span class="tooltip-wrap">
-                                    <button type="button" class="tooltip-btn" aria-label="utm_term info">?</button>
-                                    <span class="tooltip">
-                                        Optional: keyword or audience segment. Commonly used for paid search keywords or
-                                        segmentation.
-                                    </span>
-                                </span>
+                            <div id="stage" class="scroll" style="display:none">
+                                <canvas id="main"></canvas>
                             </div>
-                            <input type="text" id="term" placeholder="keyword or audience segment" />
+                        </div>
+                        <div class="help" id="status">Upload an image to begin.</div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="panel">
+                        <div class="panel-title">Crop settings</div>
+                        <div class="field-group">
+                            <div class="switch">
+                                <div>
+                                    <div style="font-weight:600">Lock aspect ratio</div>
+                                    <div class="note">Keeps crop proportions consistent while resizing.</div>
+                                </div>
+                                <input id="lockAspect" type="checkbox" disabled />
+                            </div>
+                        </div>
+                        <div class="field-group inline">
+                            <div>
+                                <label for="aspectPreset">Aspect ratio</label>
+                                <select id="aspectPreset" disabled>
+                                    <option value="free">Use current</option>
+                                    <option value="1:1">1:1</option>
+                                    <option value="4:3">4:3</option>
+                                    <option value="3:2">3:2</option>
+                                    <option value="16:9">16:9</option>
+                                    <option value="9:16">9:16</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="bg">Background</label>
+                                <select id="bg" disabled>
+                                    <option value="checker">Checker</option>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label for="zoom">Zoom</label>
+                            <div class="row" style="align-items:center">
+                                <div class="grow"><input id="zoom" type="range" min="0.05" max="6" step="0.01" value="1" disabled /></div>
+                                <div class="badge mono" id="zoomPct">100%</div>
+                            </div>
+                        </div>
+                        <div class="kpis">
+                            <div class="kpi">
+                                <div class="t">Crop display</div>
+                                <div class="v mono" id="kpiDisplay">-</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="t">Crop source</div>
+                                <div class="v mono" id="kpiSource">-</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="field-group">
-                        <div class="label-row">
-                            <label for="content">utm_content</label>
-                            <span class="tooltip-wrap">
-                                <button type="button" class="tooltip-btn" aria-label="utm_content info">?</button>
-                                <span class="tooltip">
-                                    Optional: variation/creative name. Example: banner_a, email_header_cta, button_blue.
-                                </span>
-                            </span>
-                        </div>
-                        <input type="text" id="content" placeholder="variation name like banner_a, button_blue" />
-                        <div class="footer-hint" style="margin-top: 6px;">
-                            <span id="contentCharCount">0 characters</span>
-                            <span id="contentCharWarning" style="display:none;"></span>
+                    <div class="panel tips">
+                        <div class="panel-title">Tips</div>
+                        <div class="note">
+                            <ul>
+                                <li>Drag inside the crop box to move it.</li>
+                                <li>Drag corner and edge handles to resize.</li>
+                                <li>Enable aspect lock to keep consistent proportions.</li>
+                                <li>Use fixed output size to generate thumbnails and social graphics.</li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="toggle-row">
-                        <label class="toggle">
-                            <input type="checkbox" id="normalizeSwitch" checked />
-                            <span class="toggle-pill">
-                                <span class="toggle-thumb"></span>
-                            </span>
-                            <span>Normalize values (lowercase, spaces → underscores)</span>
-                        </label>
+                    <div class="panel">
+                        <div class="panel-title">Resize and export</div>
+                        <div class="field-group">
+                            <label for="outputMode">Output size</label>
+                            <select id="outputMode" disabled>
+                                <option value="match-crop">Match crop (no resize)</option>
+                                <option value="fixed">Fixed size (resize)</option>
+                            </select>
+                        </div>
+                        <div id="fixedSize" class="field-group inline" style="display:none">
+                            <div>
+                                <label for="outW">Width</label>
+                                <input id="outW" type="number" min="1" value="512" />
+                            </div>
+                            <div>
+                                <label for="outH">Height</label>
+                                <input id="outH" type="number" min="1" value="512" />
+                            </div>
+                        </div>
+                        <div class="field-group inline">
+                            <div>
+                                <label for="format">Format</label>
+                                <select id="format" disabled>
+                                    <option value="image/png">PNG</option>
+                                    <option value="image/jpeg">JPEG</option>
+                                </select>
+                            </div>
+                            <div id="jpegQualityWrap" style="display:none">
+                                <label for="quality">JPEG quality</label>
+                                <input id="quality" type="range" min="0.4" max="1" step="0.01" value="0.92" />
+                                <div class="note mono" id="qualityPct">92%</div>
+                            </div>
+                        </div>
+                        <div class="kpi" style="margin-top:10px">
+                            <div class="t">Export</div>
+                            <div class="v mono" id="kpiExport">-</div>
+                        </div>
+                        <div class="button-row">
+                            <button id="download" class="primary" disabled>Download</button>
+                        </div>
+                        <div style="margin-top:12px">
+                            <label>Preview</label>
+                            <div class="stage" style="padding:10px">
+                                <div class="scroll" style="max-height:260px">
+                                    <canvas id="preview"></canvas>
+                                </div>
+                                <div class="note">Preview shows exported pixels, including resizing when enabled.</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="button-row">
-                        <button id="generateBtn" type="button" class="primary">
-                            <span>Generate UTM URL</span>
-                        </button>
-                        <button id="clearBtn" type="button" class="secondary">
-                            Clear
-                        </button>
-                    </div>
-                </section>
-
-                <!-- OUTPUT PANEL -->
-                <section class="panel">
-                    <div class="panel-title">
-                        <span>Generated URL</span>
-                        <span class="status" id="statusText">Copied!</span>
-                    </div>
-                    <div class="output-header">
-                        <div class="chip-row" id="chipRow"></div>
-                        <button id="copyBtn" type="button" class="secondary">
-                            Copy URL
-                        </button>
-                    </div>
-                    <div id="outputBox" class="output-box empty">
-                        Your UTM URL will appear here.
-                    </div>
-                    <div class="footer-hint">
-                        <span id="urlCharCount">Length: 0 characters</span>
-                        <span id="urlCharWarning" style="display:none;"></span>
-                    </div>
-                    <div style="margin-top: 8px; display:flex; justify-content: space-between; align-items:center; gap:8px;">
-                        <a id="previewLink" href="#" target="_blank" class="preview-link" style="display:none;">
-                            Open URL in new tab
-                        </a>
-                        <span class="hint">
-                            Tip: Keep sources/mediums consistent across all campaigns.
-                        </span>
-                    </div>
-                </section>
-            </div>
-
-            <div class="utility-tag">
-                Internal utility · Not for external marketing use.
+                </div>
             </div>
         </div>
     </div>
-
     <script>
-        const baseUrlEl = document.getElementById("baseUrl");
-        const sourceEl = document.getElementById("source");
-        const mediumEl = document.getElementById("medium");
-        const campaignEl = document.getElementById("campaign");
-        const termEl = document.getElementById("term");
-        const contentEl = document.getElementById("content");
-        const normalizeSwitch = document.getElementById("normalizeSwitch");
+    (() => {
+        const $ = (id) => document.getElementById(id);
 
-        const urlErrorEl = document.getElementById("urlError");
-        const outputBox = document.getElementById("outputBox");
-        const chipRow = document.getElementById("chipRow");
-        const copyBtn = document.getElementById("copyBtn");
-        const generateBtn = document.getElementById("generateBtn");
-        const clearBtn = document.getElementById("clearBtn");
-        const previewLink = document.getElementById("previewLink");
-        const statusText = document.getElementById("statusText");
+        const els = {
+            file: $("file"),
+            main: $("main"),
+            preview: $("preview"),
+            empty: $("empty"),
+            stage: $("stage"),
+            status: $("status"),
+            zoom: $("zoom"),
+            zoomPct: $("zoomPct"),
+            zoomIn: $("zoomIn"),
+            zoomOut: $("zoomOut"),
+            resetCrop: $("resetCrop"),
+            lockAspect: $("lockAspect"),
+            aspectPreset: $("aspectPreset"),
+            bg: $("bg"),
+            outputMode: $("outputMode"),
+            fixedSize: $("fixedSize"),
+            outW: $("outW"),
+            outH: $("outH"),
+            format: $("format"),
+            jpegQualityWrap: $("jpegQualityWrap"),
+            quality: $("quality"),
+            qualityPct: $("qualityPct"),
+            download: $("download"),
+            kpiDisplay: $("kpiDisplay"),
+            kpiSource: $("kpiSource"),
+            kpiExport: $("kpiExport"),
+            cursorHint: $("cursorHint"),
+        };
 
-        const contentCharCount = document.getElementById("contentCharCount");
-        const contentCharWarning = document.getElementById("contentCharWarning");
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+        const fmt = (n) => Number.isFinite(n) ? Math.round(n) : 0;
 
-        const urlCharCount = document.getElementById("urlCharCount");
-        const urlCharWarning = document.getElementById("urlCharWarning");
+        let img = null;
+        let imgUrl = null;
 
-        // Default options for dropdowns
-        const defaultSources = [
-            "google", "bing", "facebook", "instagram", "linkedin", "twitter", "youtube", "tiktok",
-            "newsletter", "prospect_email", "alumni_email", "partner_university", "community_partner",
-            "gradschoolscom", "studyportals", "print_brochure", "poster", "open_house_signage",
-            "fair_booth"
-        ];
+        let scale = 1;
+        let minScale = 0.05;
+        let maxScale = 6;
 
-        const defaultMediums = [
-            "paid_search", "display", "paid_social", "organic_social", "email", "newsletter",
-            "referral", "listing", "affiliate", "internal_banner", "onsite_cta", "print", "event",
-            "out_of_home", "podcast", "sms"
-        ];
+        let bg = "checker";
+        let crop = { x: 80, y: 60, w: 240, h: 240 };
 
-        const defaultCampaigns = [
-            "fall_2025", "fall_2026_launch", "spring_2026", "webinar_series", "open_house",
-            "application_deadline", "lead_nurture", "multiview_program_promotion", "rebrand_launch",
-            "cbs_mental_health_minute_sponsorship"
-        ];
+        let lockAspect = false;
+        let aspectPreset = "free";
 
-        function getStoredOptions(key, defaults) {
-            const raw = localStorage.getItem(key);
-            if (!raw) return [...defaults];
-            try {
-                const parsed = JSON.parse(raw);
-                const merged = [...defaults, ...parsed];
-                return Array.from(new Set(merged));
-            } catch {
-                return [...defaults];
-            }
+        let outputMode = "match-crop";
+        let outW = 512;
+        let outH = 512;
+
+        let format = "image/png";
+        let quality = 0.92;
+
+        let dragMode = null; // null | move | nw ne sw se n s e w
+        let dragStart = null;
+
+        function currentAspect() {
+            if (!lockAspect) return null;
+            const map = { "1:1": 1, "4:3": 4 / 3, "3:2": 3 / 2, "16:9": 16 / 9, "9:16": 9 / 16 };
+            if (aspectPreset === "free") return crop.w / Math.max(1, crop.h);
+            return map[aspectPreset] || (crop.w / Math.max(1, crop.h));
         }
 
-        function storeOption(key, value) {
-            if (!value) return;
-            const trimmed = value.trim();
-            if (!trimmed) return;
+        function setEnabled(on) {
+            [
+                els.zoom, els.zoomIn, els.zoomOut, els.resetCrop,
+                els.lockAspect, els.aspectPreset, els.bg,
+                els.outputMode, els.format, els.download
+            ].forEach(el => el.disabled = !on);
 
-            const raw = localStorage.getItem(key);
-            let arr = [];
-            if (raw) {
-                try {
-                    arr = JSON.parse(raw);
-                } catch {
-                    arr = [];
+            els.aspectPreset.disabled = !(on && els.lockAspect.checked);
+        }
+
+        function fitToStage() {
+            const pad = 24;
+            const maxW = Math.max(320, els.stage.clientWidth - pad);
+            const maxH = 520;
+            const s = Math.min(maxW / img.width, maxH / img.height);
+            const fitted = clamp(s, 0.05, 1);
+
+            scale = fitted;
+            minScale = Math.min(0.05, fitted);
+            maxScale = Math.max(6, fitted * 6);
+
+            els.zoom.min = String(minScale);
+            els.zoom.max = String(maxScale);
+            els.zoom.value = String(scale);
+            els.zoomPct.textContent = Math.round(scale * 100) + "%";
+
+            const vw = img.width * scale;
+            const vh = img.height * scale;
+            const cw = Math.min(320, vw * 0.6);
+            const ch = Math.min(320, vh * 0.6);
+            crop = { x: (vw - cw) / 2, y: (vh - ch) / 2, w: cw, h: ch };
+        }
+
+        function setCropClamped(next) {
+            const canvas = els.main;
+            const minSize = 20;
+            const W = canvas.width;
+            const H = canvas.height;
+
+            const nw = clamp(next.w, minSize, W);
+            const nh = clamp(next.h, minSize, H);
+            const nx = clamp(next.x, 0, W - nw);
+            const ny = clamp(next.y, 0, H - nh);
+            crop = { x: nx, y: ny, w: nw, h: nh };
+        }
+
+        function drawBackground(ctx, w, h) {
+            if (bg === "checker") {
+                const size = 16;
+                for (let y = 0; y < h; y += size) {
+                    for (let x = 0; x < w; x += size) {
+                        const even = ((x / size) | 0) % 2 === ((y / size) | 0) % 2;
+                        ctx.fillStyle = even ? "#f3f4f6" : "#e5e7eb";
+                        ctx.fillRect(x, y, size, size);
+                    }
                 }
-            }
-            if (!arr.includes(trimmed)) {
-                arr.push(trimmed);
-                localStorage.setItem(key, JSON.stringify(arr));
-            }
-        }
-
-        function renderDatalist(datalistId, options) {
-            const dl = document.getElementById(datalistId);
-            if (!dl) return;
-            dl.innerHTML = "";
-            options.forEach((opt) => {
-                const o = document.createElement("option");
-                o.value = opt;
-                dl.appendChild(o);
-            });
-        }
-
-        function normalizeValue(value) {
-            if (!value) return "";
-            const trimmed = value.trim();
-            if (!normalizeSwitch.checked) return trimmed;
-            return trimmed.toLowerCase().replace(/\s+/g, "_");
-        }
-
-        function isLikelyUrl(str) {
-            return /^https?:\/\//i.test(str.trim());
-        }
-
-        // Enforce adler.edu or any subdomain *.adler.edu
-        function isAdlerDomain(urlString) {
-            try {
-                const urlObj = new URL(urlString);
-                return urlObj.hostname === "adler.edu" || urlObj.hostname.endsWith(".adler.edu");
-            } catch {
-                return false;
-            }
-        }
-
-        function updateContentCharCount() {
-            const raw = contentEl.value || "";
-            const val = normalizeValue(raw);
-            const length = val.length;
-
-            contentCharCount.textContent = `${length} characters`;
-
-            if (length >= 100) {
-                contentCharWarning.style.display = "inline";
-                contentCharWarning.textContent = "Caution: 100+ characters may reduce reporting consistency.";
             } else {
-                contentCharWarning.style.display = "none";
-                contentCharWarning.textContent = "";
+                ctx.fillStyle = (bg === "dark") ? "#111827" : "#ffffff";
+                ctx.fillRect(0, 0, w, h);
             }
         }
 
-        function updateUrlCharCount(url) {
-            const length = url ? url.length : 0;
-            urlCharCount.textContent = `Length: ${length} characters`;
+        function draw() {
+            if (!img) return;
 
-            urlCharWarning.style.display = "none";
-            urlCharWarning.className = "";
-            urlCharWarning.textContent = "";
+            const canvas = els.main;
+            const ctx = canvas.getContext("2d");
 
-            if (length >= 2000) {
-                urlCharWarning.style.display = "inline";
-                urlCharWarning.classList.add("danger");
-                urlCharWarning.textContent = "Warning: URL may break in some platforms (2000+ chars).";
-            } else if (length >= 1800) {
-                urlCharWarning.style.display = "inline";
-                urlCharWarning.classList.add("warning");
-                urlCharWarning.textContent = "Caution: URL is getting long (1800+ chars).";
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+
+            canvas.width = w;
+            canvas.height = h;
+
+            drawBackground(ctx, w, h);
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, 0, 0, w, h);
+
+            // Dim outside crop
+            ctx.save();
+            ctx.fillStyle = "rgba(17,24,39,0.35)";
+            ctx.beginPath();
+            ctx.rect(0, 0, w, h);
+            ctx.rect(crop.x, crop.y, crop.w, crop.h);
+            ctx.fill("evenodd");
+            ctx.restore();
+
+            // Crop outline
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.95)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(crop.x, crop.y, crop.w, crop.h);
+
+            // Rule-of-thirds
+            ctx.strokeStyle = "rgba(255,255,255,0.35)";
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 2; i++) {
+                ctx.beginPath();
+                ctx.moveTo(crop.x + (crop.w * i) / 3, crop.y);
+                ctx.lineTo(crop.x + (crop.w * i) / 3, crop.y + crop.h);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(crop.x, crop.y + (crop.h * i) / 3);
+                ctx.lineTo(crop.x + crop.w, crop.y + (crop.h * i) / 3);
+                ctx.stroke();
             }
+
+            // Handles
+            const hs = 10;
+            const handles = [
+                [crop.x, crop.y],
+                [crop.x + crop.w, crop.y],
+                [crop.x, crop.y + crop.h],
+                [crop.x + crop.w, crop.y + crop.h],
+                [crop.x + crop.w / 2, crop.y],
+                [crop.x + crop.w / 2, crop.y + crop.h],
+                [crop.x, crop.y + crop.h / 2],
+                [crop.x + crop.w, crop.y + crop.h / 2],
+            ];
+            ctx.fillStyle = "rgba(255,255,255,0.95)";
+            for (const [hx, hy] of handles) ctx.fillRect(hx - hs / 2, hy - hs / 2, hs, hs);
+
+            ctx.restore();
+
+            drawPreview();
+            updateKpis();
         }
 
-        function buildUtmUrl() {
-            const base = baseUrlEl.value.trim();
-            const source = normalizeValue(sourceEl.value);
-            const medium = normalizeValue(mediumEl.value);
-            const campaign = normalizeValue(campaignEl.value);
-            const term = normalizeValue(termEl.value);
-            const content = normalizeValue(contentEl.value);
+        function drawPreview() {
+            if (!img) return;
 
-            urlErrorEl.style.display = "none";
-            urlErrorEl.textContent = "";
+            const pv = els.preview;
+            const ctx = pv.getContext("2d");
 
-            if (!base) {
-                urlErrorEl.textContent = "Base URL is required.";
-                urlErrorEl.style.display = "block";
-                return "";
+            const sx = clamp(crop.x / scale, 0, img.width);
+            const sy = clamp(crop.y / scale, 0, img.height);
+            const sw = clamp(crop.w / scale, 1, img.width - sx);
+            const sh = clamp(crop.h / scale, 1, img.height - sy);
+
+            const ow = (outputMode === "fixed") ? clamp(outW, 1, 20000) : Math.max(1, Math.round(sw));
+            const oh = (outputMode === "fixed") ? clamp(outH, 1, 20000) : Math.max(1, Math.round(sh));
+
+            pv.width = ow;
+            pv.height = oh;
+
+            ctx.clearRect(0, 0, ow, oh);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, sx, sy, sw, sh, 0, 0, ow, oh);
+        }
+
+        function updateKpis() {
+            if (!img) {
+                els.kpiDisplay.textContent = "-";
+                els.kpiSource.textContent = "-";
+                els.kpiExport.textContent = "-";
+                return;
             }
 
-            if (!isLikelyUrl(base)) {
-                urlErrorEl.textContent = "Base URL must start with http:// or https://";
-                urlErrorEl.style.display = "block";
-                return "";
-            }
+            const sx = clamp(crop.x / scale, 0, img.width);
+            const sy = clamp(crop.y / scale, 0, img.height);
+            const sw = clamp(crop.w / scale, 1, img.width - sx);
+            const sh = clamp(crop.h / scale, 1, img.height - sy);
 
-            // NEW: Adler domain enforcement
-            if (!isAdlerDomain(base)) {
-                urlErrorEl.textContent = "Base URL must be on the adler.edu domain or a valid subdomain (e.g., https://subdomain.adler.edu).";
-                urlErrorEl.style.display = "block";
-                return "";
-            }
+            els.kpiDisplay.textContent = fmt(crop.w) + "×" + fmt(crop.h);
+            els.kpiSource.textContent = fmt(sw) + "×" + fmt(sh);
 
-            if (!source || !medium || !campaign) {
-                urlErrorEl.textContent = "utm_source, utm_medium, and utm_campaign are required.";
-                urlErrorEl.style.display = "block";
-                return "";
-            }
+            const ow = (outputMode === "fixed") ? outW : Math.round(sw);
+            const oh = (outputMode === "fixed") ? outH : Math.round(sh);
+            els.kpiExport.textContent = fmt(ow) + "×" + fmt(oh);
+        }
 
-            const params = new URLSearchParams();
-            params.set("utm_source", source);
-            params.set("utm_medium", medium);
-            params.set("utm_campaign", campaign);
-            if (term) params.set("utm_term", term);
-            if (content) params.set("utm_content", content);
+        function getHitMode(mx, my) {
+            const hs = 12;
+            const within = (x, y, cx, cy) => Math.abs(x - cx) <= hs && Math.abs(y - cy) <= hs;
 
-            let finalUrl;
-            try {
-                const urlObj = new URL(base);
-                const existing = new URLSearchParams(urlObj.search);
+            const x1 = crop.x,
+                y1 = crop.y;
+            const x2 = crop.x + crop.w,
+                y2 = crop.y + crop.h;
+            const xm = crop.x + crop.w / 2,
+                ym = crop.y + crop.h / 2;
 
-                // Preserve existing query params by appending them after the UTM params
-                for (const [key, value] of existing.entries()) {
-                    params.append(key, value);
+            if (within(mx, my, x1, y1)) return "nw";
+            if (within(mx, my, x2, y1)) return "ne";
+            if (within(mx, my, x1, y2)) return "sw";
+            if (within(mx, my, x2, y2)) return "se";
+            if (within(mx, my, xm, y1)) return "n";
+            if (within(mx, my, xm, y2)) return "s";
+            if (within(mx, my, x1, ym)) return "w";
+            if (within(mx, my, x2, ym)) return "e";
+
+            const inside = (mx >= x1 && mx <= x2 && my >= y1 && my <= y2);
+            return inside ? "move" : null;
+        }
+
+        function cursorFor(mode) {
+            const map = {
+                move: "move",
+                nw: "nwse-resize",
+                se: "nwse-resize",
+                ne: "nesw-resize",
+                sw: "nesw-resize",
+                n: "ns-resize",
+                s: "ns-resize",
+                e: "ew-resize",
+                w: "ew-resize",
+            };
+            return mode ? map[mode] || "default" : "default";
+        }
+
+        function applyAspect(baseCrop, mode, dx, dy, a) {
+            let { x, y, w, h } = baseCrop;
+            const minSize = 20;
+
+            const enforce = (ww, hh) => {
+                if (ww < minSize) { ww = minSize;
+                    hh = ww / a; }
+                if (hh < minSize) { hh = minSize;
+                    ww = hh * a; }
+                return { ww, hh };
+            };
+
+            if (mode === "move" || mode === null) return baseCrop;
+
+            const corner = (mode === "nw" || mode === "ne" || mode === "sw" || mode === "se");
+            if (corner) {
+                const useX = Math.abs(dx) >= Math.abs(dy);
+                if (useX) {
+                    const ww = w + ((mode === "ne" || mode === "se") ? dx : -dx);
+                    const hh = ww / a;
+                    const out = enforce(ww, hh);
+                    if (mode === "nw" || mode === "sw") x = x + (w - out.ww);
+                    if (mode === "nw" || mode === "ne") y = y + (h - out.hh);
+                    w = out.ww;
+                    h = out.hh;
+                } else {
+                    const hh = h + ((mode === "sw" || mode === "se") ? dy : -dy);
+                    const ww = hh * a;
+                    const out = enforce(ww, hh);
+                    if (mode === "nw" || mode === "sw") x = x + (w - out.ww);
+                    if (mode === "nw" || mode === "ne") y = y + (h - out.hh);
+                    w = out.ww;
+                    h = out.hh;
                 }
-
-                urlObj.search = params.toString();
-                finalUrl = urlObj.toString();
-            } catch {
-                const joiner = base.includes("?") ? "&" : "?";
-                finalUrl = base + joiner + params.toString();
+                return { x, y, w, h };
             }
 
-            storeOption("utm_sources", source);
-            storeOption("utm_mediums", medium);
-            storeOption("utm_campaigns", campaign);
-
-            renderDatalist("sourceOptions", getStoredOptions("utm_sources", defaultSources));
-            renderDatalist("mediumOptions", getStoredOptions("utm_mediums", defaultMediums));
-            renderDatalist("campaignOptions", getStoredOptions("utm_campaigns", defaultCampaigns));
-
-            chipRow.innerHTML = "";
-            const chips = [
-                ["source", source],
-                ["medium", medium],
-                ["campaign", campaign],
-                ["term", term],
-                ["content", content],
-            ].filter(([, v]) => v);
-
-            chips.forEach(([k, v]) => {
-                const chip = document.createElement("span");
-                chip.className = "chip";
-                chip.innerHTML = `<span class="chip-key">${k}:</span><span>${v}</span>`;
-                chipRow.appendChild(chip);
-            });
-
-            outputBox.textContent = finalUrl;
-            outputBox.classList.remove("empty");
-            previewLink.href = finalUrl;
-            previewLink.style.display = "inline";
-
-            updateUrlCharCount(finalUrl);
-
-            return finalUrl;
-        }
-
-        function copyToClipboard(text) {
-            if (!text) return;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(
-                    () => showStatus(),
-                    () => fallbackCopy(text)
-                );
-            } else {
-                fallbackCopy(text);
+            if (mode === "e" || mode === "w") {
+                const ww = w + (mode === "e" ? dx : -dx);
+                const hh = ww / a;
+                const out = enforce(ww, hh);
+                if (mode === "w") x = x + (w - out.ww);
+                y = y + (h - out.hh) / 2;
+                w = out.ww;
+                h = out.hh;
+                return { x, y, w, h };
             }
-        }
 
-        function fallbackCopy(text) {
-            const temp = document.createElement("textarea");
-            temp.value = text;
-            temp.setAttribute("readonly", "");
-            temp.style.position = "absolute";
-            temp.style.left = "-9999px";
-            document.body.appendChild(temp);
-            temp.select();
-            try {
-                document.execCommand("copy");
-            } catch (e) {
-                console.error("Copy failed", e);
+            if (mode === "n" || mode === "s") {
+                const hh = h + (mode === "s" ? dy : -dy);
+                const ww = hh * a;
+                const out = enforce(ww, hh);
+                if (mode === "n") y = y + (h - out.hh);
+                x = x + (w - out.ww) / 2;
+                w = out.ww;
+                h = out.hh;
+                return { x, y, w, h };
             }
-            document.body.removeChild(temp);
-            showStatus();
+
+            return baseCrop;
         }
 
-        function showStatus() {
-            statusText.classList.add("show");
-            setTimeout(() => {
-                statusText.classList.remove("show");
-            }, 1400);
-        }
+        // File load
+        els.file.addEventListener("change", (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
 
-        // Initialize dropdowns
-        renderDatalist("sourceOptions", getStoredOptions("utm_sources", defaultSources));
-        renderDatalist("mediumOptions", getStoredOptions("utm_mediums", defaultMediums));
-        renderDatalist("campaignOptions", getStoredOptions("utm_campaigns", defaultCampaigns));
+            if (imgUrl) URL.revokeObjectURL(imgUrl);
+            imgUrl = URL.createObjectURL(file);
 
-        // Event listeners
-        generateBtn.addEventListener("click", () => buildUtmUrl());
+            const im = new Image();
+            im.onload = () => {
+                img = im;
 
-        copyBtn.addEventListener("click", () => {
-            const current = outputBox.classList.contains("empty") ? "" : outputBox.textContent.trim();
-            if (!current) {
-                const url = buildUtmUrl();
-                if (url) copyToClipboard(url);
-            } else {
-                copyToClipboard(current);
-            }
+                els.empty.style.display = "none";
+                els.stage.style.display = "block";
+                setEnabled(true);
+
+                fitToStage();
+                els.lockAspect.checked = false;
+                lockAspect = false;
+                els.aspectPreset.disabled = true;
+
+                els.status.textContent = "Loaded " + img.width + "×" + img.height + ".";
+                draw();
+            };
+            im.onerror = () => {
+                els.status.textContent = "Unable to load that image.";
+            };
+            im.src = imgUrl;
         });
 
-        clearBtn.addEventListener("click", () => {
-            baseUrlEl.value = "https://adler.edu/";
-            sourceEl.value = "";
-            mediumEl.value = "";
-            campaignEl.value = "";
-            termEl.value = "";
-            contentEl.value = "";
-            chipRow.innerHTML = "";
-            outputBox.textContent = "Your UTM URL will appear here.";
-            outputBox.classList.add("empty");
-            previewLink.style.display = "none";
-            urlErrorEl.style.display = "none";
-            urlErrorEl.textContent = "";
+        // Controls
+        function resetCrop() {
+            if (!img) return;
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const cw = Math.min(320, w * 0.6);
+            const ch = Math.min(320, h * 0.6);
+            crop = { x: (w - cw) / 2, y: (h - ch) / 2, w: cw, h: ch };
+            draw();
+        }
+        els.resetCrop.addEventListener("click", resetCrop);
 
-            updateContentCharCount();
-            updateUrlCharCount("");
+        function setScale(next) {
+            scale = clamp(next, minScale, maxScale);
+            els.zoom.value = String(scale);
+            els.zoomPct.textContent = Math.round(scale * 100) + "%";
+
+            const W = Math.round(img.width * scale);
+            const H = Math.round(img.height * scale);
+            setCropClamped({ ...crop, w: Math.min(crop.w, W), h: Math.min(crop.h, H) });
+            draw();
+        }
+
+        els.zoom.addEventListener("input", () => { if (img) setScale(parseFloat(els.zoom.value)); });
+        els.zoomIn.addEventListener("click", () => { if (img) setScale(parseFloat((scale + 0.1).toFixed(3))); });
+        els.zoomOut.addEventListener("click", () => { if (img) setScale(parseFloat((scale - 0.1).toFixed(3))); });
+
+        els.bg.addEventListener("change", () => { bg = els.bg.value;
+            draw(); });
+
+        els.lockAspect.addEventListener("change", () => {
+            lockAspect = els.lockAspect.checked;
+            els.aspectPreset.disabled = !lockAspect || !img;
+            draw();
         });
 
-        [baseUrlEl, sourceEl, mediumEl, campaignEl, termEl, contentEl].forEach((el) => {
-            el.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    buildUtmUrl();
-                }
-            });
+        els.aspectPreset.addEventListener("change", () => { aspectPreset = els.aspectPreset.value;
+            draw(); });
+
+        els.outputMode.addEventListener("change", () => {
+            outputMode = els.outputMode.value;
+            els.fixedSize.style.display = (outputMode === "fixed") ? "grid" : "none";
+            draw();
         });
 
-        // Content counter live updates
-        contentEl.addEventListener("input", updateContentCharCount);
-        normalizeSwitch.addEventListener("change", updateContentCharCount);
+        els.outW.addEventListener("input", () => {
+            outW = clamp(parseInt(els.outW.value || "1", 10), 1, 20000);
+            els.outW.value = String(outW);
+            draw();
+        });
+        els.outH.addEventListener("input", () => {
+            outH = clamp(parseInt(els.outH.value || "1", 10), 1, 20000);
+            els.outH.value = String(outH);
+            draw();
+        });
 
-        // Initialize counters
-        updateContentCharCount();
-        updateUrlCharCount("");
+        els.format.addEventListener("change", () => {
+            format = els.format.value;
+            els.jpegQualityWrap.style.display = (format === "image/jpeg") ? "block" : "none";
+        });
+
+        els.quality.addEventListener("input", () => {
+            quality = parseFloat(els.quality.value);
+            els.qualityPct.textContent = Math.round(quality * 100) + "%";
+        });
+
+        els.download.addEventListener("click", () => {
+            if (!img) return;
+            const pv = els.preview;
+
+            pv.toBlob((blob) => {
+                if (!blob) return;
+                const a = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                a.href = url;
+                const ext = (format === "image/png") ? "png" : "jpg";
+                a.download = `crop-${pv.width}x${pv.height}.${ext}`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            }, format, (format === "image/jpeg") ? quality : undefined);
+        });
+
+        // Pointer crop interactions
+        const canvas = els.main;
+
+        canvas.addEventListener("pointerdown", (e) => {
+            if (!img) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            const mode = getHitMode(mx, my);
+            if (!mode) return;
+
+            dragMode = mode;
+            dragStart = { mx, my, crop: { ...crop } };
+            canvas.setPointerCapture(e.pointerId);
+        });
+
+        canvas.addEventListener("pointermove", (e) => {
+            if (!img) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (!dragMode || !dragStart) {
+                const hit = getHitMode(mx, my);
+                canvas.style.cursor = cursorFor(hit);
+                els.cursorHint.textContent = "Cursor: " + (hit || "ready");
+                return;
+            }
+
+            const dx = mx - dragStart.mx;
+            const dy = my - dragStart.my;
+
+            if (dragMode === "move") {
+                setCropClamped({ ...dragStart.crop, x: dragStart.crop.x + dx, y: dragStart.crop.y + dy });
+                draw();
+                return;
+            }
+
+            let base = { ...dragStart.crop };
+            if (dragMode.includes("e")) base.w = dragStart.crop.w + dx;
+            if (dragMode.includes("s")) base.h = dragStart.crop.h + dy;
+            if (dragMode.includes("w")) { base.x = dragStart.crop.x + dx;
+                base.w = dragStart.crop.w - dx; }
+            if (dragMode.includes("n")) { base.y = dragStart.crop.y + dy;
+                base.h = dragStart.crop.h - dy; }
+
+            let next = base;
+            const a = currentAspect();
+            if (a) next = applyAspect(dragStart.crop, dragMode, dx, dy, a);
+
+            setCropClamped(next);
+            draw();
+        });
+
+        function endDrag() {
+            dragMode = null;
+            dragStart = null;
+            els.cursorHint.textContent = "Cursor: ready";
+        }
+        canvas.addEventListener("pointerup", endDrag);
+        canvas.addEventListener("pointercancel", endDrag);
+        canvas.addEventListener("pointerleave", () => { if (dragMode) endDrag(); });
+
+        // Init
+        els.bg.value = bg;
+        els.outputMode.value = outputMode;
+        els.format.value = format;
+        els.quality.value = String(quality);
+        els.qualityPct.textContent = Math.round(quality * 100) + "%";
+        setEnabled(false);
+        updateKpis();
+    })();
     </script>
 </body>
 
